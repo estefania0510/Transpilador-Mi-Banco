@@ -76,7 +76,7 @@ Se cobra el 4x1000 sobre el monto retirado.
 }
 ```
 
-La cuenta de origen sale de la sesión. Se cobra el 4x1000 al origen.
+Se cobra el 4x1000 al origen.
 
 ### Consultar saldo, movimientos y cerrar sesión
 
