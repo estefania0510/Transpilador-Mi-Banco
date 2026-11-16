@@ -1,0 +1,22 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RETIRAR-DINERO.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 SALDO-INICIAL     USAGE COMP-2.
+       01 MONTO-RETIRAR     USAGE COMP-2.
+       01 SALDO-ACTUALIZADO USAGE COMP-2.
+       01 ESTADO            PIC S9(9) COMP-5.
+       PROCEDURE DIVISION USING SALDO-INICIAL
+                                MONTO-RETIRAR
+                                SALDO-ACTUALIZADO
+                                ESTADO.
+       MAIN-PROCEDURE.
+           IF MONTO-RETIRAR > SALDO-INICIAL
+              MOVE SALDO-INICIAL TO SALDO-ACTUALIZADO
+              MOVE 1 TO ESTADO
+           ELSE
+              COMPUTE SALDO-ACTUALIZADO = SALDO-INICIAL - MONTO-RETIRAR
+              MOVE 0 TO ESTADO
+           END-IF
+           GOBACK.
+       END PROGRAM RETIRAR-DINERO.

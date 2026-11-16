@@ -1,0 +1,33 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TRANSFERIR-DINERO.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TOTAL-DEBITO      USAGE COMP-2.
+       LINKAGE SECTION.
+       01 SALDO-ORIGEN      USAGE COMP-2.
+       01 SALDO-DESTINO     USAGE COMP-2.
+       01 MONTO-TRANSFERIR  USAGE COMP-2.
+       01 COMISION          USAGE COMP-2.
+       01 NUEVO-ORIGEN      USAGE COMP-2.
+       01 NUEVO-DESTINO     USAGE COMP-2.
+       01 ESTADO            PIC S9(9) COMP-5.
+       PROCEDURE DIVISION USING SALDO-ORIGEN
+                                SALDO-DESTINO
+                                MONTO-TRANSFERIR
+                                COMISION
+                                NUEVO-ORIGEN
+                                NUEVO-DESTINO
+                                ESTADO.
+       MAIN-PROCEDURE.
+           COMPUTE TOTAL-DEBITO = MONTO-TRANSFERIR + COMISION
+           IF TOTAL-DEBITO > SALDO-ORIGEN
+              MOVE SALDO-ORIGEN TO NUEVO-ORIGEN
+              MOVE SALDO-DESTINO TO NUEVO-DESTINO
+              MOVE 1 TO ESTADO
+           ELSE
+              COMPUTE NUEVO-ORIGEN = SALDO-ORIGEN - TOTAL-DEBITO
+              COMPUTE NUEVO-DESTINO = SALDO-DESTINO + MONTO-TRANSFERIR
+              MOVE 0 TO ESTADO
+           END-IF
+           GOBACK.
+       END PROGRAM TRANSFERIR-DINERO.

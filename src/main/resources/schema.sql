@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS cuentas (
+    numero VARCHAR(10) PRIMARY KEY,
+    saldo DOUBLE NOT NULL
+);
+
+INSERT INTO cuentas (numero, saldo)
+SELECT '1001', 2000.00 FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM cuentas WHERE numero = '1001');
+
+INSERT INTO cuentas (numero, saldo)
+SELECT '1002', 500.00 FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM cuentas WHERE numero = '1002');
+
+INSERT INTO cuentas (numero, saldo)
+SELECT '1003', 1000.00 FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM cuentas WHERE numero = '1003');
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    celular VARCHAR(10) PRIMARY KEY,
+    nombre VARCHAR(60) NOT NULL,
+    apellido VARCHAR(60) NOT NULL,
+    documento VARCHAR(20) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    password_hash VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS movimientos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cuenta VARCHAR(10) NOT NULL,
+    tipo VARCHAR(30) NOT NULL,
+    monto DOUBLE NOT NULL,
+    gmf DOUBLE NOT NULL,
+    saldo_despues DOUBLE NOT NULL,
+    contraparte VARCHAR(10),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);

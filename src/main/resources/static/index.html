@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi Banco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0F1B3D;
+    --cobalt: #2342C9;
+    --cobalt-deep: #142A87;
+    --cobalt-soft: #E6EBFB;
+    --paper: #F2F4F9;
+    --surface: #FFFFFF;
+    --line: #DCE1EE;
+    --muted: #596382;
+    --in: #0E7A53;
+    --in-soft: #E1F4EC;
+    --out: #B4372D;
+    --out-soft: #FBE9E7;
+    --gold: #F2B33D;
+    --radius: 14px;
+    --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  [hidden] { display: none !important; }
+  h1, h2, h3, p { margin: 0; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Botones y campos ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 0; border-radius: 10px; padding: 12px 20px;
+    font-weight: 700; cursor: pointer;
+    background: var(--cobalt); color: #fff;
+    transition: background .15s;
+  }
+  .btn:hover { background: var(--cobalt-deep); }
+  .btn:disabled { opacity: .6; cursor: progress; }
+  .btn-block { width: 100%; }
+  .btn-ghost { background: transparent; color: var(--cobalt); border: 1.5px solid var(--line); }
+  .btn-ghost:hover { background: var(--cobalt-soft); border-color: var(--cobalt-soft); }
+  .btn-small { padding: 8px 14px; font-size: 14px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 14px; font-weight: 600; }
+  .field input {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    background: #fff; font-size: 16px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:hover { border-color: #b9c1d9; }
+  .field input:focus { outline: none; border-color: var(--cobalt); box-shadow: 0 0 0 3px var(--cobalt-soft); }
+  .field .hint { font-size: 13px; color: var(--muted); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+
+  .msg { padding: 12px 14px; border-radius: 10px; font-size: 15px; font-weight: 500; }
+  .msg.ok { background: var(--in-soft); color: #08583b; }
+  .msg.err { background: var(--out-soft); color: #8c2920; }
+  .msg.info { background: var(--cobalt-soft); color: var(--cobalt-deep); }
+
+  /* ---------- Pantalla de acceso ---------- */
+  .acceso { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .acceso-lado {
+    background: var(--cobalt-deep); color: #fff;
+    padding: 56px clamp(32px, 6vw, 88px);
+    display: flex; flex-direction: column; justify-content: space-between; gap: 48px;
+  }
+  .marca { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px; }
+  .marca-logo {
+    width: 40px; height: 40px; border-radius: 11px; background: var(--gold); color: var(--ink);
+    display: grid; place-items: center; font-weight: 800; font-size: 20px;
+  }
+  .acceso-lado h1 { font-size: clamp(32px, 4vw, 48px); line-height: 1.1; font-weight: 800; letter-spacing: -.02em; max-width: 14ch; }
+  .reglas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; max-width: 42ch; }
+  .reglas li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: #D5DCF7; font-size: 15px; }
+  .reglas svg { margin-top: 3px; color: var(--gold); }
+  .acceso-forma { display: grid; place-items: center; padding: 40px 24px; }
+  .acceso-caja { width: 100%; max-width: 440px; }
+  .acceso-caja h2 { font-size: 28px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 4px; }
+  .acceso-caja > p { color: var(--muted); margin-bottom: 24px; }
+
+  .pestanas { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; background: var(--paper); border-radius: 12px; margin-bottom: 24px; }
+  .pestana {
+    border: 0; background: transparent; padding: 10px 12px; border-radius: 9px;
+    font-weight: 700; color: var(--muted); cursor: pointer;
+  }
+  .pestana[aria-selected="true"] { background: #fff; color: var(--cobalt-deep); box-shadow: 0 1px 3px rgba(15,27,61,.15); }
+  .acceso-forma .pestanas { background: #E7EAF3; }
+
+  /* ---------- Panel ---------- */
+  .cabecera { background: #fff; border-bottom: 1px solid var(--line); }
+  .cabecera-in {
+    max-width: 1120px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .cabecera .marca { color: var(--ink); font-size: 18px; }
+  .cabecera .marca-logo { width: 34px; height: 34px; font-size: 17px; background: var(--cobalt); color: #fff; }
+  .usuario { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--cobalt-soft); color: var(--cobalt-deep);
+    display: grid; place-items: center; font-weight: 800; font-size: 14px; flex: none;
+  }
+  .usuario-nombre { font-weight: 700; line-height: 1.2; }
+  .usuario-sub { font-size: 13px; color: var(--muted); }
+
+  .panel {
+    max-width: 1120px; margin: 0 auto; padding: 28px 24px 64px;
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 24px; align-items: start;
+  }
+  .columna { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+  .saldo {
+    background: var(--cobalt-deep); color: #fff; border-radius: 20px; padding: 28px;
+    display: flex; flex-direction: column; gap: 6px;
+    border-bottom: 5px solid var(--gold);
+  }
+  .saldo-etq { font-size: 15px; color: #C9D3F6; font-weight: 600; }
+  .saldo-valor { font-size: clamp(36px, 6vw, 52px); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+  .saldo-cuenta { font-size: 14px; color: #C9D3F6; margin-top: 6px; }
+
+  .tarjeta { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .tarjeta-cab { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .tarjeta h2 { font-size: 19px; font-weight: 800; }
+
+  .op-form { display: flex; flex-direction: column; gap: 16px; }
+  .aviso-gmf { font-size: 14px; color: var(--muted); background: var(--paper); padding: 10px 12px; border-radius: 10px; }
+  .aviso-gmf strong { color: var(--ink); }
+  .monto-wrap { position: relative; }
+  .monto-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--muted); }
+  .monto-wrap input { padding-left: 32px; font-size: 20px; font-weight: 700; }
+
+  /* ---------- Movimientos ---------- */
+  .lista { list-style: none; margin: 0; padding: 0; }
+  .mov { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+  .mov:first-child { border-top: 0; padding-top: 0; }
+  .mov-ico { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; }
+  .mov-ico.in { background: var(--in-soft); color: var(--in); }
+  .mov-ico.out { background: var(--out-soft); color: var(--out); }
+  .mov-tit { font-weight: 700; }
+  .mov-sub { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mov-der { text-align: right; }
+  .mov-monto { font-weight: 800; }
+  .mov-monto.in { color: var(--in); }
+  .mov-monto.out { color: var(--out); }
+  .mov-saldo { font-size: 13px; color: var(--muted); }
+  .vacio { text-align: center; padding: 28px 8px 8px; color: var(--muted); }
+  .vacio strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
+
+  /* ---------- Aviso de inactividad ---------- */
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    width: min(520px, calc(100% - 32px));
+    background: var(--ink); color: #fff; border-radius: 14px; padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    box-shadow: 0 12px 32px rgba(15,27,61,.35); z-index: 10;
+  }
+  .toast p { font-size: 15px; }
+  .toast .btn { background: var(--gold); color: var(--ink); white-space: nowrap; }
+  .toast .btn:hover { background: #ffc766; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .acceso { grid-template-columns: 1fr; }
+    .acceso-lado { padding: 32px 24px; gap: 28px; }
+    .acceso-lado h1 { max-width: none; }
+    .panel { grid-template-columns: 1fr; padding: 20px 16px 56px; }
+    .cabecera-in { padding: 12px 16px; }
+  }
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+    .usuario-info { display: none; }
+    .tarjeta { padding: 18px; }
+    .saldo { padding: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ================= ACCESO ================= -->
+<main id="vistaAcceso" class="acceso" hidden>
+  <section class="acceso-lado">
+    <div class="marca"><span class="marca-logo" aria-hidden="true">B</span> Mi Banco</div>
+    <div class="stack" style="gap:28px">
+      <h1>Tu dinero, a la vista y en orden.</h1>
+      <ul class="reglas">
+        <li>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+          <span>Antes de retirar o transferir, ves cuánto se cobra por el 4x1000.</span>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+          <span>La sesión se cierra sola después de 5 minutos sin actividad.</span>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+          <span>Solo pueden abrir cuenta las personas mayores de 18 años.</span>
+        </li>
+      </ul>
+    </div>
+    <p style="font-size:13px;color:#9FB0EE">Proyecto académico con datos de prueba.</p>
+  </section>
+
+  <section class="acceso-forma">
+    <div class="acceso-caja">
+      <div class="pestanas" role="tablist">
+        <button class="pestana" id="tabLogin" role="tab" aria-selected="true" type="button">Iniciar sesión</button>
+        <button class="pestana" id="tabRegistro" role="tab" aria-selected="false" type="button">Crear cuenta</button>
+      </div>
+
+      <div id="avisoAcceso" role="status" hidden style="margin-bottom:16px"></div>
+
+      <!-- Login -->
+      <div id="panelLogin">
+        <h2>Bienvenido de nuevo</h2>
+        <p>Entra con tu celular y tu contraseña.</p>
+        <form id="formLogin" class="stack" novalidate>
+          <div class="field">
+            <label for="loginCelular">Celular</label>
+            <input id="loginCelular" inputmode="numeric" autocomplete="username" maxlength="10" placeholder="3001234567">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Contraseña</label>
+            <input id="loginPassword" type="password" autocomplete="current-password">
+          </div>
+          <button class="btn btn-block" type="submit" id="btnLogin">Entrar</button>
+        </form>
+      </div>
+
+      <!-- Registro -->
+      <div id="panelRegistro" hidden>
+        <h2>Abre tu cuenta</h2>
+        <p>Tarda menos de un minuto.</p>
+        <form id="formRegistro" class="stack" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="regNombre">Nombre</label>
+              <input id="regNombre" autocomplete="given-name">
+            </div>
+            <div class="field">
+              <label for="regApellido">Apellido</label>
+              <input id="regApellido" autocomplete="family-name">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="regDocumento">Documento</label>
+              <input id="regDocumento" inputmode="numeric" maxlength="15">
+            </div>
+            <div class="field">
+              <label for="regFecha">Fecha de nacimiento</label>
+              <input id="regFecha" type="date" autocomplete="bday">
+            </div>
+          </div>
+          <div class="field">
+            <label for="regCelular">Celular</label>
+            <input id="regCelular" inputmode="numeric" maxlength="10" placeholder="3001234567" autocomplete="tel">
+            <span class="hint">Será tu número de cuenta. Debe tener 10 dígitos.</span>
+          </div>
+          <div class="field">
+            <label for="regPassword">Contraseña</label>
+            <input id="regPassword" type="password" autocomplete="new-password">
+            <span class="hint">Mínimo 4 caracteres.</span>
+          </div>
+          <button class="btn btn-block" type="submit" id="btnRegistro">Crear cuenta</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= PANEL ================= -->
+<div id="vistaPanel" hidden>
+  <header class="cabecera">
+    <div class="cabecera-in">
+      <div class="marca"><span class="marca-logo" aria-hidden="true">B</span> Mi Banco</div>
+      <div class="usuario">
+        <div class="usuario-info" style="text-align:right">
+          <div class="usuario-nombre" id="uNombre"></div>
+          <div class="usuario-sub num" id="uCelular"></div>
+        </div>
+        <div class="avatar" id="uIniciales" aria-hidden="true"></div>
+        <button class="btn btn-ghost btn-small" id="btnSalir" type="button">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="panel">
+    <div class="columna">
+      <section class="saldo" aria-labelledby="saldoEtq">
+        <span class="saldo-etq" id="saldoEtq">Saldo disponible</span>
+        <span class="saldo-valor num" id="saldoValor">$ 0,00</span>
+        <span class="saldo-cuenta num" id="saldoCuenta"></span>
+      </section>
+
+      <section class="tarjeta" aria-labelledby="opTitulo">
+        <div class="tarjeta-cab"><h2 id="opTitulo">¿Qué quieres hacer?</h2></div>
+        <div class="pestanas" role="tablist" id="opTabs">
+          <button class="pestana" role="tab" data-op="consignar" aria-selected="true" type="button">Consignar</button>
+          <button class="pestana" role="tab" data-op="retirar" aria-selected="false" type="button">Retirar</button>
+          <button class="pestana" role="tab" data-op="transferir" aria-selected="false" type="button">Transferir</button>
+        </div>
+
+        <form id="formOp" class="op-form" novalidate>
+          <div class="field" id="campoDestino" hidden>
+            <label for="opDestino">Celular de destino</label>
+            <input id="opDestino" inputmode="numeric" maxlength="10" placeholder="3001234567">
+          </div>
+          <div class="field">
+            <label for="opMonto">Monto</label>
+            <div class="monto-wrap">
+              <span aria-hidden="true">$</span>
+              <input id="opMonto" inputmode="decimal" placeholder="0" autocomplete="off">
+            </div>
+          </div>
+          <p class="aviso-gmf" id="avisoGmf" hidden></p>
+          <button class="btn btn-block" type="submit" id="btnOp">Consignar</button>
+          <div id="opMensaje" role="status" hidden></div>
+        </form>
+      </section>
+    </div>
+
+    <div class="columna">
+      <section class="tarjeta" aria-labelledby="movTitulo">
+        <div class="tarjeta-cab">
+          <h2 id="movTitulo">Movimientos</h2>
+          <button class="btn btn-ghost btn-small" id="btnActualizar" type="button">Actualizar</button>
+        </div>
+        <ul class="lista" id="listaMov"></ul>
+        <div class="vacio" id="vacioMov" hidden>
+          <strong>Aún no tienes movimientos</strong>
+          Haz tu primera consignación para verla aquí.
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Aviso de inactividad -->
+<div class="toast" id="toastInactividad" role="alert" hidden>
+  <p>Tu sesión se cerrará en <strong class="num" id="toastSeg">30</strong> s por inactividad.</p>
+  <button class="btn btn-small" id="btnSeguir" type="button">Seguir conectado</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // Debe ser igual a banco.sesion.inactividad-segundos del application.yaml
+  var INACTIVIDAD = 300;
+  var AVISO = 30;
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- Sesión (en la pestaña del navegador) ----------
+  var sesion = {
+    get: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
+    clear: function () { try { sessionStorage.clear(); } catch (e) {} },
+    get token() { return this.get('token'); },
+    get nombre() { return this.get('nombre'); },
+    get celular() { return this.get('celular'); },
+    get ultima() { return Number(this.get('ultima')) || 0; },
+    tocar: function () { this.set('ultima', String(Date.now())); }
+  };
+
+  // ---------- Utilidades ----------
+  var moneda = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function dinero(n) { return moneda.format(Number(n) || 0); }
+  function celularBonito(c) { return c && c.length === 10 ? c.slice(0, 3) + ' ' + c.slice(3, 6) + ' ' + c.slice(6) : (c || ''); }
+  function iniciales(nombre) {
+    var p = (nombre || '').trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return '?';
+    return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+  }
+  function fechaBonita(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) + ', ' +
+           d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+  }
+  function mostrarMsg(el, tipo, texto) {
+    el.className = 'msg ' + tipo;
+    el.textContent = texto;
+    el.hidden = false;
+  }
+  function ocultar(el) { el.hidden = true; }
+  function esMayorDeEdad(yyyyMmDd) {
+    var p = yyyyMmDd.split('-').map(Number);
+    if (p.length !== 3 || p.some(isNaN)) return false;
+    var hoy = new Date();
+    var edad = hoy.getFullYear() - p[0];
+    var m = hoy.getMonth() + 1 - p[1];
+    if (m < 0 || (m === 0 && hoy.getDate() < p[2])) edad--;
+    return edad >= 18;
+  }
+  function leerMonto(texto) {
+    var n = Number(String(texto).trim().replace(',', '.'));
+    return isFinite(n) ? n : NaN;
+  }
+
+  // ---------- Llamadas al servidor ----------
+  function api(ruta, opts) {
+    opts = opts || {};
+    var conSesion = opts.auth !== false;
+    var headers = { 'Content-Type': 'application/json' };
+    if (conSesion && sesion.token) headers.Authorization = 'Bearer ' + sesion.token;
+    return fetch(ruta, {
+      method: opts.method || 'GET',
+      headers: headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (res.status === 401 && conSesion) {
+          cerrarLocal('Tu sesión se cerró por inactividad. Inicia sesión de nuevo.');
+        } else if (conSesion) {
+          sesion.tocar();
+        }
+        return { ok: res.ok, status: res.status, data: data };
+      });
+    }).catch(function () {
+      return { ok: false, status: 0, data: { mensaje: 'No se pudo conectar con el servidor. Revisa que la aplicación esté en marcha.' } };
+    });
+  }
+
+  // ---------- Vistas ----------
+  function mostrarAcceso(aviso, tipo) {
+    $('vistaPanel').hidden = true;
+    $('vistaAcceso').hidden = false;
+    $('toastInactividad').hidden = true;
+    if (aviso) mostrarMsg($('avisoAcceso'), tipo || 'info', aviso); else ocultar($('avisoAcceso'));
+  }
+  function mostrarPanel() {
+    $('vistaAcceso').hidden = true;
+    $('vistaPanel').hidden = false;
+    $('uNombre').textContent = sesion.nombre || '';
+    $('uCelular').textContent = celularBonito(sesion.celular);
+    $('uIniciales').textContent = iniciales(sesion.nombre);
+    $('saldoCuenta').textContent = 'Cuenta ' + celularBonito(sesion.celular);
+    ocultar($('opMensaje'));
+    cambiarOperacion('consignar');
+    refrescar();
+  }
+  function cerrarLocal(aviso) {
+    sesion.clear();
+    mostrarAcceso(aviso, 'info');
+  }
+
+  // ---------- Pestañas de acceso ----------
+  function cambiarAcceso(cual) {
+    var login = cual === 'login';
+    $('tabLogin').setAttribute('aria-selected', login);
+    $('tabRegistro').setAttribute('aria-selected', !login);
+    $('panelLogin').hidden = !login;
+    $('panelRegistro').hidden = login;
+    ocultar($('avisoAcceso'));
+  }
+  $('tabLogin').addEventListener('click', function () { cambiarAcceso('login'); });
+  $('tabRegistro').addEventListener('click', function () { cambiarAcceso('registro'); });
+
+  // ---------- Login ----------
+  $('formLogin').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var celular = $('loginCelular').value.trim();
+    var password = $('loginPassword').value;
+    if (!/^\d{10}$/.test(celular)) return mostrarMsg($('avisoAcceso'), 'err', 'El celular debe tener 10 dígitos.');
+    if (!password) return mostrarMsg($('avisoAcceso'), 'err', 'Escribe tu contraseña.');
+    var btn = $('btnLogin'); btn.disabled = true;
+    api('/auth/login', { method: 'POST', auth: false, body: { celular: celular, password: password } })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.ok && r.data.token) {
+          sesion.set('token', r.data.token);
+          sesion.set('nombre', r.data.nombre || '');
+          sesion.set('celular', celular);
+          sesion.tocar();
+          $('loginPassword').value = '';
+          mostrarPanel();
+        } else {
+          mostrarMsg($('avisoAcceso'), 'err', r.data.mensaje || 'Celular o contraseña incorrectos.');
+        }
+      });
+  });
+
+  // ---------- Registro ----------
+  $('formRegistro').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var av = $('avisoAcceso');
+    var d = {
+      nombre: $('regNombre').value.trim(),
+      apellido: $('regApellido').value.trim(),
+      documento: $('regDocumento').value.trim(),
+      fechaNacimiento: $('regFecha').value,
+      celular: $('regCelular').value.trim(),
+      password: $('regPassword').value
+    };
+    if (!d.nombre) return mostrarMsg(av, 'err', 'Escribe tu nombre.');
+    if (!d.apellido) return mostrarMsg(av, 'err', 'Escribe tu apellido.');
+    if (!d.documento) return mostrarMsg(av, 'err', 'Escribe tu documento.');
+    if (!d.fechaNacimiento) return mostrarMsg(av, 'err', 'Elige tu fecha de nacimiento.');
+    if (!esMayorDeEdad(d.fechaNacimiento)) return mostrarMsg(av, 'err', 'Solo pueden abrir cuenta las personas mayores de 18 años.');
+    if (!/^\d{10}$/.test(d.celular)) return mostrarMsg(av, 'err', 'El celular debe tener 10 dígitos.');
+    if (d.password.length < 4) return mostrarMsg(av, 'err', 'La contraseña debe tener mínimo 4 caracteres.');
+    var btn = $('btnRegistro'); btn.disabled = true;
+    api('/auth/registro', { method: 'POST', auth: false, body: d }).then(function (r) {
+      btn.disabled = false;
+      if (r.ok) {
+        $('formRegistro').reset();
+        cambiarAcceso('login');
+        $('loginCelular').value = d.celular;
+        mostrarMsg(av, 'ok', 'Cuenta creada. Ya puedes iniciar sesión.');
+        $('loginPassword').focus();
+      } else {
+        mostrarMsg(av, 'err', r.data.mensaje || 'No se pudo crear la cuenta.');
+      }
+    });
+  });
+
+  // ---------- Cerrar sesión ----------
+  $('btnSalir').addEventListener('click', function () {
+    api('/auth/logout', { method: 'POST' }).then(function () {
+      cerrarLocal('Cerraste sesión correctamente.');
+    });
+  });
+
+  // ---------- Saldo y movimientos ----------
+  var ICONO_IN = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5L5 15M5 7v8h8"/></svg>';
+  var ICONO_OUT = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15L15 5M7 5h8v8"/></svg>';
+  var TIPOS = {
+    CONSIGNACION: { t: 'Consignación', entra: true },
+    RETIRO: { t: 'Retiro', entra: false },
+    TRANSFERENCIA_ENVIADA: { t: 'Transferencia enviada', entra: false },
+    TRANSFERENCIA_RECIBIDA: { t: 'Transferencia recibida', entra: true }
+  };
+
+  function cargarSaldo() {
+    return api('/transacciones/saldo').then(function (r) {
+      if (r.ok) $('saldoValor').textContent = dinero(r.data.saldo);
+    });
+  }
+
+  function cargarMovimientos() {
+    return api('/transacciones/movimientos?limite=20').then(function (r) {
+      if (!r.ok || !Array.isArray(r.data)) return;
+      var ul = $('listaMov');
+      ul.textContent = '';
+      $('vacioMov').hidden = r.data.length > 0;
+      r.data.forEach(function (m) {
+        var info = TIPOS[m.tipo] || { t: m.tipo, entra: m.tipo.indexOf('RECIBIDA') > -1 };
+        var clase = info.entra ? 'in' : 'out';
+
+        var li = document.createElement('li'); li.className = 'mov';
+
+        var ico = document.createElement('div'); ico.className = 'mov-ico ' + clase;
+        ico.innerHTML = info.entra ? ICONO_IN : ICONO_OUT;
+
+        var centro = document.createElement('div');
+        var tit = document.createElement('div'); tit.className = 'mov-tit'; tit.textContent = info.t;
+        var sub = document.createElement('div'); sub.className = 'mov-sub num';
+        var partes = [fechaBonita(m.fecha)];
+        if (m.contraparte) partes.push((info.entra ? 'de ' : 'a ') + celularBonito(m.contraparte));
+        if (m.gmf > 0) partes.push('4x1000: ' + dinero(m.gmf));
+        sub.textContent = partes.filter(Boolean).join(' · ');
+        centro.appendChild(tit); centro.appendChild(sub);
+
+        var der = document.createElement('div'); der.className = 'mov-der';
+        var monto = document.createElement('div'); monto.className = 'mov-monto num ' + clase;
+        monto.textContent = (info.entra ? '+ ' : '− ') + dinero(m.monto);
+        var saldo = document.createElement('div'); saldo.className = 'mov-saldo num';
+        saldo.textContent = 'Saldo ' + dinero(m.saldoDespues);
+        der.appendChild(monto); der.appendChild(saldo);
+
+        li.appendChild(ico); li.appendChild(centro); li.appendChild(der);
+        ul.appendChild(li);
+      });
+    });
+  }
+
+  function refrescar() { return Promise.all([cargarSaldo(), cargarMovimientos()]); }
+
+  $('btnActualizar').addEventListener('click', function () {
+    var b = this; b.disabled = true;
+    refrescar().then(function () { b.disabled = false; });
+  });
+
+  // ---------- Operaciones ----------
+  var operacion = 'consignar';
+  var ETIQUETAS = { consignar: 'Consignar', retirar: 'Retirar', transferir: 'Transferir' };
+
+  function cambiarOperacion(op) {
+    operacion = op;
+    var tabs = document.querySelectorAll('#opTabs .pestana');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].setAttribute('aria-selected', tabs[i].getAttribute('data-op') === op);
+    }
+    $('campoDestino').hidden = op !== 'transferir';
+    $('btnOp').textContent = ETIQUETAS[op];
+    ocultar($('opMensaje'));
+    actualizarAvisoGmf();
+  }
+  document.getElementById('opTabs').addEventListener('click', function (e) {
+    var op = e.target.getAttribute && e.target.getAttribute('data-op');
+    if (op) cambiarOperacion(op);
+  });
+
+  function actualizarAvisoGmf() {
+    var aviso = $('avisoGmf');
+    if (operacion === 'consignar') { aviso.hidden = true; return; }
+    var monto = leerMonto($('opMonto').value);
+    var gmf = monto > 0 ? monto * 0.004 : 0;
+    aviso.hidden = false;
+    aviso.innerHTML = '';
+    if (gmf > 0) {
+      aviso.appendChild(document.createTextNode('Se cobrará el 4x1000: '));
+      var s = document.createElement('strong'); s.className = 'num'; s.textContent = dinero(gmf);
+      aviso.appendChild(s);
+      aviso.appendChild(document.createTextNode('. Se descontará de tu saldo junto con el monto.'));
+    } else {
+      aviso.textContent = 'Esta operación tiene un cobro del 4x1000, que se descuenta de tu saldo.';
+    }
+  }
+  $('opMonto').addEventListener('input', actualizarAvisoGmf);
+
+  $('formOp').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('opMensaje');
+    var monto = leerMonto($('opMonto').value);
+    if (!(monto > 0)) return mostrarMsg(msg, 'err', 'Escribe un monto mayor a 0.');
+
+    var ruta, metodo, cuerpo = { monto: monto };
+    if (operacion === 'consignar') { ruta = '/transacciones/consignar'; metodo = 'PUT'; }
+    else if (operacion === 'retirar') { ruta = '/transacciones/retirar'; metodo = 'PUT'; }
+    else {
+      var destino = $('opDestino').value.trim();
+      if (!/^\d{10}$/.test(destino)) return mostrarMsg(msg, 'err', 'El celular de destino debe tener 10 dígitos.');
+      if (destino === sesion.celular) return mostrarMsg(msg, 'err', 'No puedes transferirte a tu propia cuenta.');
+      ruta = '/transacciones/transferir'; metodo = 'POST'; cuerpo.cuentaDestino = destino;
+    }
+
+    var btn = $('btnOp'); btn.disabled = true;
+    api(ruta, { method: metodo, body: cuerpo }).then(function (r) {
+      btn.disabled = false;
+      if (r.status === 401) return;
+      if (r.ok && r.data.exitoso !== false) {
+        mostrarMsg(msg, 'ok', r.data.mensaje || 'Operación exitosa.');
+        $('opMonto').value = '';
+        if (operacion === 'transferir') $('opDestino').value = '';
+        actualizarAvisoGmf();
+        refrescar();
+      } else {
+        mostrarMsg(msg, 'err', r.data.mensaje || 'No se pudo completar la operación.');
+      }
+    });
+  });
+
+  // ---------- Inactividad ----------
+  $('btnSeguir').addEventListener('click', function () {
+    $('toastInactividad').hidden = true;
+    cargarSaldo();
+  });
+
+  setInterval(function () {
+    if (!sesion.token) return;
+    var restante = INACTIVIDAD - (Date.now() - sesion.ultima) / 1000;
+    if (restante <= 0) {
+      cerrarLocal('Tu sesión se cerró por inactividad. Inicia sesión de nuevo.');
+    } else if (restante <= AVISO) {
+      $('toastSeg').textContent = Math.ceil(restante);
+      $('toastInactividad').hidden = false;
+    } else {
+      $('toastInactividad').hidden = true;
+    }
+  }, 1000);
+
+  // ---------- Arranque ----------
+  if (sesion.token && (Date.now() - sesion.ultima) / 1000 < INACTIVIDAD) {
+    mostrarPanel();
+  } else {
+    var habiaSesion = !!sesion.token;
+    sesion.clear();
+    mostrarAcceso(habiaSesion ? 'Tu sesión se cerró por inactividad. Inicia sesión de nuevo.' : null, 'info');
+  }
+})();
+</script>
+</body>
+</html>

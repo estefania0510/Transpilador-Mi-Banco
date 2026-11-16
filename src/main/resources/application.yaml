@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: transacciones
+  datasource:
+    url: jdbc:h2:file:./data/banco
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+
+banco:
+  sesion:
+    inactividad-segundos: 300
+  cobol:
+    timeout-ms: 3000
+    retardo-prueba-ms: 0
