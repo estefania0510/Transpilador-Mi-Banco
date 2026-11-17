@@ -14,6 +14,7 @@ import com.banco.transacciones.Record.LoginResponse;
 import com.banco.transacciones.Record.RegistroRequest;
 import com.banco.transacciones.Record.RegistroResponse;
 import com.banco.transacciones.Service.AuthService;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/auth")
@@ -47,7 +48,29 @@ public class AuthController {
                 : ResponseEntity.status(401).body(respuesta);
     }
     
-    
+        @PutMapping("/cambiar-contrasena")
+    public ResponseEntity<RegistroResponse> cambiarContrasena(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestBody Map<String, String> request) {
+
+        String celular = authService.celularDeEncabezado(auth);
+
+        if (celular == null) {
+            return ResponseEntity.status(401)
+                    .body(new RegistroResponse(false, "Sesión no válida. Inicia sesión de nuevo"));
+        }
+
+        RegistroResponse respuesta = authService.cambiarContrasena(
+                celular,
+                request.get("passwordActual"),
+                request.get("passwordNueva")
+        );
+
+        return respuesta.exitoso()
+                ? ResponseEntity.ok(respuesta)
+                : ResponseEntity.badRequest().body(respuesta);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(
             @RequestHeader(value = "Authorization", required = false) String auth) {

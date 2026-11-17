@@ -156,4 +156,41 @@ public class AuthService {
     public void cerrarSesionConEncabezado(String encabezado) {
         cerrarSesion(extraerToken(encabezado));
     }
+
+    @Transactional
+    public RegistroResponse cambiarContrasena(
+            String celular,
+            String passwordActual,
+            String passwordNueva) {
+
+        if (passwordActual == null || passwordActual.isBlank()) {
+            return new RegistroResponse(false, "Debes ingresar tu contraseña actual");
+        }
+
+        if (passwordNueva == null || passwordNueva.length() < 4) {
+            return new RegistroResponse(false, "La nueva contraseña debe tener mínimo 4 caracteres");
+        }
+
+        String passwordHash = jdbc.queryForObject(
+                "SELECT password_hash FROM usuarios WHERE celular = ?",
+                String.class,
+                celular
+        );
+
+        if (!encoder.matches(passwordActual, passwordHash)) {
+            return new RegistroResponse(false, "La contraseña actual es incorrecta");
+        }
+
+        if (encoder.matches(passwordNueva, passwordHash)) {
+            return new RegistroResponse(false, "La nueva contraseña debe ser diferente a la actual");
+        }
+
+        jdbc.update(
+                "UPDATE usuarios SET password_hash = ? WHERE celular = ?",
+                encoder.encode(passwordNueva),
+                celular
+        );
+
+        return new RegistroResponse(true, "La contraseña se cambió correctamente");
+    }
 }

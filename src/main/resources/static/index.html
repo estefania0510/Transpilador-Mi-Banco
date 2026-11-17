@@ -126,6 +126,17 @@
   }
   .columna { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 
+  /* ---------- Pantalla de historial ---------- */
+  .panel-movimientos {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .panel-movimientos .columna {
+    width: 100%;
+    max-width: 1000px;
+  }
   .saldo {
     background: var(--cobalt-deep); color: #fff; border-radius: 20px; padding: 28px;
     display: flex; flex-direction: column; gap: 6px;
@@ -146,6 +157,186 @@
   .monto-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--muted); }
   .monto-wrap input { padding-left: 32px; font-size: 20px; font-weight: 700; }
 
+
+/* ---------- Menú lateral ---------- */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  min-height: 100vh;
+  background: #142A87;
+  color: #fff;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transition: width .25s ease, padding .25s ease;
+}
+
+.sidebar-marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--cobalt);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+}
+
+.sidebar-titulo {
+  color: #AEBBEA;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 0 10px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #D5DCF7;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sidebar-link:hover:not(:disabled),
+.sidebar-link.activo {
+  background: #2945A5;
+  color: #fff;
+}
+
+.sidebar-link:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.sidebar-link svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.sidebar-pendiente {
+  margin-left: auto;
+  font-size: 10px;
+  color: #C9D3F6;
+}
+
+.contenido-principal {
+  flex: 1;
+  min-width: 0;
+}
+
+.cabecera {
+  position: relative;
+}
+
+.cabecera-in {
+  max-width: none;
+  padding: 14px 28px;
+}
+
+.cabecera-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-menu {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--cobalt);
+  cursor: pointer;
+}
+
+.btn-menu:hover {
+  background: var(--cobalt-soft);
+}
+
+.btn-menu svg {
+  width: 21px;
+  height: 21px;
+}
+
+.app-shell.menu-oculto .sidebar {
+  width: 0;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+
+.panel {
+  max-width: none;
+  padding: 28px;
+}
+
+/* ---------- Menú en pantallas pequeñas ---------- */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    min-height: 100vh;
+    box-shadow: 8px 0 25px rgba(15,27,61,.18);
+  }
+
+  .panel {
+    padding: 20px 16px 56px;
+  }
+
+  .cabecera-in {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .cabecera-in {
+    gap: 8px;
+  }
+
+  .cabecera-izquierda {
+    gap: 8px;
+  }
+}
+
   /* ---------- Movimientos ---------- */
   .lista { list-style: none; margin: 0; padding: 0; }
   .mov { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
@@ -162,6 +353,171 @@
   .mov-saldo { font-size: 13px; color: var(--muted); }
   .vacio { text-align: center; padding: 28px 8px 8px; color: var(--muted); }
   .vacio strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
+
+  /* ---------- Filtros de movimientos ---------- */
+  .filtros-movimientos {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    align-items: end;
+    gap: 16px;
+    margin: 20px 0;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+
+  .filtros-movimientos .field {
+    margin: 0;
+  }
+
+  .filtros-movimientos input,
+  .filtros-movimientos select {
+    width: 100%;
+  }
+
+  .filtros-movimientos select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.filtros-movimientos select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+  @media (max-width: 700px) {
+    .filtros-movimientos {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 450px) {
+    .filtros-movimientos {
+      grid-template-columns: 1fr;
+    }
+  }
+
+    /* ---------- Pantalla de seguridad ---------- */
+  .panel-seguridad {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+  }
+
+  .panel-seguridad .columna {
+      width: 100%;
+      max-width: 700px;
+  }
+
+  .tarjeta-seguridad {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 28px;
+      margin-top: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  .tarjeta-seguridad h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+  }
+
+  .tarjeta-seguridad p {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+  }
+
+  .tarjeta-seguridad .field {
+      margin-bottom: 18px;
+  }
+
+  .tarjeta-seguridad input {
+      width: 100%;
+      box-sizing: border-box;
+  }
+
+  .tarjeta-seguridad .btn {
+      margin-top: 8px;
+  }
+
+  #mensajeContrasena {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #f1f5f9;
+      color: #334155;
+  }
+
+    /* ---------- Pantalla de ayuda ---------- */
+  .panel-ayuda {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+  }
+
+  .panel-ayuda .columna {
+      width: 100%;
+      max-width: 850px;
+  }
+
+  .tarjeta-ayuda {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 28px;
+      margin-top: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  .tarjeta-ayuda h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+  }
+
+  .tarjeta-ayuda > p {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+  }
+
+  .ayuda-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #e5e7eb;
+  }
+
+  .ayuda-item:last-child {
+      border-bottom: none;
+  }
+
+  .ayuda-item h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #1f2937;
+  }
+
+  .ayuda-item p {
+      margin: 0;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+  }
+
+  .contacto-ayuda {
+      margin-top: 20px;
+  }
 
   /* ---------- Aviso de inactividad ---------- */
   .toast {
@@ -288,69 +644,315 @@
 
 <!-- ================= PANEL ================= -->
 <div id="vistaPanel" hidden>
-  <header class="cabecera">
-    <div class="cabecera-in">
-      <div class="marca"><span class="marca-logo" aria-hidden="true">B</span> Mi Banco</div>
-      <div class="usuario">
-        <div class="usuario-info" style="text-align:right">
-          <div class="usuario-nombre" id="uNombre"></div>
-          <div class="usuario-sub num" id="uCelular"></div>
-        </div>
-        <div class="avatar" id="uIniciales" aria-hidden="true"></div>
-        <button class="btn btn-ghost btn-small" id="btnSalir" type="button">Cerrar sesión</button>
+  <div class="app-shell" id="appShell">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-marca">
+        <span class="sidebar-logo">B</span>
+        Mi Banco
       </div>
-    </div>
-  </header>
 
-  <main class="panel">
-    <div class="columna">
-      <section class="saldo" aria-labelledby="saldoEtq">
-        <span class="saldo-etq" id="saldoEtq">Saldo disponible</span>
-        <span class="saldo-valor num" id="saldoValor">$ 0,00</span>
-        <span class="saldo-cuenta num" id="saldoCuenta"></span>
-      </section>
+      <div>
+        <div class="sidebar-titulo">MENÚ PRINCIPAL</div>
 
-      <section class="tarjeta" aria-labelledby="opTitulo">
-        <div class="tarjeta-cab"><h2 id="opTitulo">¿Qué quieres hacer?</h2></div>
-        <div class="pestanas" role="tablist" id="opTabs">
-          <button class="pestana" role="tab" data-op="consignar" aria-selected="true" type="button">Consignar</button>
-          <button class="pestana" role="tab" data-op="retirar" aria-selected="false" type="button">Retirar</button>
-          <button class="pestana" role="tab" data-op="transferir" aria-selected="false" type="button">Transferir</button>
-        </div>
+        <nav class="sidebar-nav" aria-label="Navegación principal">
+          <button class="sidebar-link activo" id="btnVistaInicio" type="button">
+            <span>⌂</span>
+            Inicio
+          </button>
 
-        <form id="formOp" class="op-form" novalidate>
-          <div class="field" id="campoDestino" hidden>
-            <label for="opDestino">Celular de destino</label>
-            <input id="opDestino" inputmode="numeric" maxlength="10" placeholder="3001234567">
-          </div>
-          <div class="field">
-            <label for="opMonto">Monto</label>
-            <div class="monto-wrap">
-              <span aria-hidden="true">$</span>
-              <input id="opMonto" inputmode="decimal" placeholder="0" autocomplete="off">
+          <button class="sidebar-link" id="btnVistaMovimientos" type="button">
+            <span>↔</span>
+            Movimientos
+          </button>
+
+         <button class="sidebar-link" id="btnVistaSeguridad" type="button">
+          <span>♙</span>
+          Seguridad
+        </button>
+
+          <button class="sidebar-link" id="btnVistaAyuda" type="button">
+            <span>?</span>
+            Ayuda y soporte
+          </button>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <div class="contenido-principal">
+
+      <header class="cabecera">
+        <div class="cabecera-in">
+
+          <div class="cabecera-izquierda">
+            <button
+              class="btn-menu"
+              id="btnMenu"
+              type="button"
+              aria-label="Ocultar menú"
+              aria-expanded="true"
+              title="Mostrar u ocultar menú">
+              <svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </button>
+
+            <div class="marca">
+              <span class="marca-logo" aria-hidden="true">B</span>
+              Mi Banco
             </div>
           </div>
-          <p class="aviso-gmf" id="avisoGmf" hidden></p>
-          <button class="btn btn-block" type="submit" id="btnOp">Consignar</button>
-          <div id="opMensaje" role="status" hidden></div>
-        </form>
-      </section>
-    </div>
 
-    <div class="columna">
-      <section class="tarjeta" aria-labelledby="movTitulo">
-        <div class="tarjeta-cab">
-          <h2 id="movTitulo">Movimientos</h2>
-          <button class="btn btn-ghost btn-small" id="btnActualizar" type="button">Actualizar</button>
+          <div class="usuario">
+            <div class="usuario-info" style="text-align:right">
+              <div class="usuario-nombre" id="uNombre"></div>
+              <div class="usuario-sub num" id="uCelular"></div>
+            </div>
+
+            <div class="avatar" id="uIniciales" aria-hidden="true"></div>
+
+            <button class="btn btn-ghost btn-small"
+              id="btnSalir" type="button">
+              Cerrar sesión
+            </button>
+          </div>
+
         </div>
-        <ul class="lista" id="listaMov"></ul>
-        <div class="vacio" id="vacioMov" hidden>
-          <strong>Aún no tienes movimientos</strong>
-          Haz tu primera consignación para verla aquí.
+      </header>
+
+      <!-- PANTALLA DE INICIO ACTUAL -->
+      <main class="panel" id="vistaInicio"> 
+
+        <div class="columna">
+          <section class="saldo" aria-labelledby="saldoEtq">
+            <span class="saldo-etq" id="saldoEtq">Saldo disponible</span>
+            <span class="saldo-valor num" id="saldoValor">$ 0,00</span>
+            <span class="saldo-cuenta num" id="saldoCuenta"></span>
+          </section>
+
+          <section class="tarjeta" aria-labelledby="opTitulo">
+            <div class="tarjeta-cab">
+              <h2 id="opTitulo">¿Qué quieres hacer?</h2>
+            </div>
+
+            <div class="pestanas" role="tablist" id="opTabs">
+              <button class="pestana" role="tab"
+                data-op="consignar" aria-selected="true" type="button">
+                Consignar
+              </button>
+              <button class="pestana" role="tab"
+                data-op="retirar" aria-selected="false" type="button">
+                Retirar
+              </button>
+              <button class="pestana" role="tab"
+                data-op="transferir" aria-selected="false" type="button">
+                Transferir
+              </button>
+            </div>
+
+            <form id="formOp" class="op-form" novalidate>
+              <div class="field" id="campoDestino" hidden>
+                <label for="opDestino">Celular de destino</label>
+                <input id="opDestino" inputmode="numeric"
+                  maxlength="10" placeholder="3001234567">
+              </div>
+
+              <div class="field">
+                <label for="opMonto">Monto</label>
+                <div class="monto-wrap">
+                  <span aria-hidden="true">$</span>
+                  <input id="opMonto" inputmode="decimal"
+                    placeholder="0" autocomplete="off">
+                </div>
+              </div>
+
+              <p class="aviso-gmf" id="avisoGmf" hidden></p>
+
+              <button class="btn btn-block" type="submit" id="btnOp">
+                Consignar
+              </button>
+
+              <div id="opMensaje" role="status" hidden></div>
+            </form>
+          </section>
         </div>
-      </section>
+
+        <div class="columna">
+          <section class="tarjeta" aria-labelledby="movTitulo">
+            <div class="tarjeta-cab">
+              <h2 id="movTitulo">Movimientos recientes</h2>
+              <button class="btn btn-ghost btn-small"
+                id="btnActualizar" type="button">
+                Actualizar
+              </button>
+            </div>
+
+            <ul class="lista" id="listaMov"></ul>
+
+            <div class="vacio" id="vacioMov" hidden>
+              <strong>Aún no tienes movimientos</strong>
+              Haz tu primera consignación para verla aquí.
+            </div>
+          </section>
+        </div>
+
+      </main>
+            <!-- PANTALLA DE MOVIMIENTOS -->
+      <main class="panel panel-movimientos" id="vistaMovimientos" hidden>
+
+        <div class="columna">
+          <section class="tarjeta" aria-labelledby="historialTitulo">
+
+            <div class="tarjeta-cab">
+              <div>
+                <h2 id="historialTitulo">Historial de movimientos</h2>
+                <p>Consulta los movimientos de tu cuenta.</p>
+              </div>
+
+              <button class="btn btn-ghost btn-small"
+                id="btnActualizarCompleto" type="button">
+                Actualizar
+              </button>
+            </div>
+
+            <!-- Filtros del historial -->
+            <div class="filtros-movimientos">
+
+              <div class="field">
+                <label for="filtroTipo">Tipo de movimiento</label>
+                <select id="filtroTipo">
+                  <option value="todos">Todos los movimientos</option>
+                  <option value="CONSIGNACION">Consignaciones</option>
+                  <option value="RETIRO">Retiros</option>
+                  <option value="TRANSFERENCIA">Transferencias</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="filtroDesde">Desde</label>
+                <input type="date" id="filtroDesde">
+              </div>
+
+              <div class="field">
+                <label for="filtroHasta">Hasta</label>
+                <input type="date" id="filtroHasta">
+              </div>
+
+              <button class="btn btn-ghost btn-small"
+                id="btnLimpiarFiltros" type="button">
+                Limpiar filtros
+              </button>
+            </div>
+
+            <ul class="lista" id="listaMovCompleta"></ul>
+
+            <div class="vacio" id="vacioMovCompleto" hidden>
+              <strong>Aún no tienes movimientos</strong>
+              Aquí aparecerán las operaciones que realices en tu cuenta.
+            </div>
+
+          </section>
+        </div>
+
+      </main>
+      <main class="panel panel-seguridad" id="vistaSeguridad" hidden>
+        <div class="columna">
+            <div class="cabecera-panel">
+                <div>
+                    <h2>Seguridad</h2>
+                    <p>Administra la contraseña de tu cuenta.</p>
+                </div>
+            </div>
+
+            <section class="tarjeta-seguridad">
+                <h3>Cambiar contraseña</h3>
+                <p>Para mantener tu cuenta segura, ingresa tu contraseña actual y elige una nueva.</p>
+
+                <form id="formCambiarContrasena">
+                    <div class="field">
+                        <label for="passwordActual">Contraseña actual</label>
+                        <input type="password" id="passwordActual"
+                              placeholder="Ingresa tu contraseña actual" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="passwordNueva">Nueva contraseña</label>
+                        <input type="password" id="passwordNueva"
+                              placeholder="Mínimo 4 caracteres" minlength="4" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="passwordConfirmar">Confirmar nueva contraseña</label>
+                        <input type="password" id="passwordConfirmar"
+                              placeholder="Repite la nueva contraseña" minlength="4" required>
+                    </div>
+
+                    <div id="mensajeContrasena" class="mensaje" hidden></div>
+
+                    <button type="submit" class="btn btn-primary" id="btnCambiarContrasena">
+                        Cambiar contraseña
+                    </button>
+                </form>
+            </section>
+        </div>
+      </main>
+      <main class="panel panel-ayuda" id="vistaAyuda" hidden>
+        <div class="columna">
+            <div class="cabecera-panel">
+                <div>
+                    <h2>Ayuda y soporte</h2>
+                    <p>Encuentra información para utilizar Mi Banco.</p>
+                </div>
+            </div>
+
+            <section class="tarjeta-ayuda">
+                <h3>¿Cómo podemos ayudarte?</h3>
+                <p>Consulta algunas indicaciones para utilizar las opciones de tu cuenta.</p>
+
+                <div class="ayuda-item">
+                    <h4>¿Cómo consultar mi saldo?</h4>
+                    <p>Ingresa a Inicio y encontrarás el saldo disponible de tu cuenta. También puedes actualizarlo con el botón correspondiente.</p>
+                </div>
+
+                <div class="ayuda-item">
+                    <h4>¿Cómo realizar una consignación?</h4>
+                    <p>En Inicio, selecciona la opción Consignar, ingresa el valor y confirma la operación.</p>
+                </div>
+
+                <div class="ayuda-item">
+                    <h4>¿Cómo retirar dinero?</h4>
+                    <p>Selecciona Retirar, escribe el monto que deseas retirar y confirma la operación.</p>
+                </div>
+
+                <div class="ayuda-item">
+                    <h4>¿Cómo transferir dinero?</h4>
+                    <p>Selecciona Transferir, ingresa el número de cuenta de destino, el monto y confirma la transferencia.</p>
+                </div>
+
+                <div class="ayuda-item">
+                    <h4>¿Dónde puedo consultar mis movimientos?</h4>
+                    <p>Entra a Movimientos para consultar tu historial. Puedes filtrar por tipo de operación y fechas.</p>
+                </div>
+
+                <div class="ayuda-item">
+                    <h4>¿Cómo cambiar mi contraseña?</h4>
+                    <p>Ingresa a Seguridad, escribe tu contraseña actual y registra una nueva.</p>
+                </div>
+            </section>
+
+            <section class="tarjeta-ayuda contacto-ayuda">
+                <h3>¿Necesitas más ayuda?</h3>
+                <p>Si tienes inconvenientes al utilizar la aplicación, comunícate con el equipo de soporte.</p>
+                <p><strong>Mi Banco</strong> · Atención al usuario</p>
+            </section>
+        </div>
+      </main>
     </div>
-  </main>
+  </div>
 </div>
 
 <!-- Aviso de inactividad -->
@@ -462,6 +1064,113 @@
     sesion.clear();
     mostrarAcceso(aviso, 'info');
   }
+
+  // ---------- Mostrar u ocultar menú lateral ----------
+  var appShell = $('appShell');
+  var btnMenu = $('btnMenu');
+
+  btnMenu.addEventListener('click', function () {
+    var oculto = appShell.classList.toggle('menu-oculto');
+
+    btnMenu.setAttribute('aria-expanded', String(!oculto));
+    btnMenu.setAttribute(
+      'aria-label',
+      oculto ? 'Mostrar menú' : 'Ocultar menú'
+    );
+  });
+  // ---------- Navegación entre pantallas ----------
+  var vistaInicio = $('vistaInicio');
+  var vistaMovimientos = $('vistaMovimientos');
+  var vistaSeguridad = $('vistaSeguridad');
+  var vistaAyuda = $('vistaAyuda');
+
+  var btnVistaInicio = $('btnVistaInicio');
+  var btnVistaMovimientos = $('btnVistaMovimientos');
+  var btnVistaSeguridad = $('btnVistaSeguridad');
+  var btnVistaAyuda = $('btnVistaAyuda');
+  
+
+  function cambiarVista(vista) {
+    vistaInicio.hidden = vista !== 'inicio';
+    vistaMovimientos.hidden = vista !== 'movimientos';
+    vistaSeguridad.hidden = vista !== 'seguridad';
+    vistaAyuda.hidden = vista !== 'ayuda';
+
+    btnVistaInicio.classList.toggle('activo', vista === 'inicio');
+    btnVistaMovimientos.classList.toggle('activo', vista === 'movimientos');
+    btnVistaSeguridad.classList.toggle('activo', vista === 'seguridad');
+    btnVistaAyuda.classList.toggle('activo', vista === 'ayuda');
+
+    if (vista === 'movimientos') {
+      cargarMovimientosCompletos();
+    }
+  }
+
+  btnVistaInicio.addEventListener('click', function () {
+    cambiarVista('inicio');
+  });
+
+  btnVistaMovimientos.addEventListener('click', function () {
+    cambiarVista('movimientos');
+  });
+
+  btnVistaSeguridad.addEventListener('click', function () {
+    cambiarVista('seguridad');
+  });
+
+  btnVistaAyuda.addEventListener('click', function () {
+    cambiarVista('ayuda');
+  });
+
+    // ---------- Cambio de contraseña ----------
+  $('formCambiarContrasena').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var actual = $('passwordActual').value;
+    var nueva = $('passwordNueva').value;
+    var confirmar = $('passwordConfirmar').value;
+    var mensaje = $('mensajeContrasena');
+    var boton = $('btnCambiarContrasena');
+
+    mensaje.hidden = false;
+
+    if (nueva.length < 4) {
+      mensaje.textContent = 'La nueva contraseña debe tener mínimo 4 caracteres';
+      return;
+    }
+
+    if (nueva !== confirmar) {
+      mensaje.textContent = 'Las contraseñas nuevas no coinciden';
+      return;
+    }
+
+    if (actual === nueva) {
+      mensaje.textContent = 'La nueva contraseña debe ser diferente a la actual';
+      return;
+    }
+
+    boton.disabled = true;
+    boton.textContent = 'Actualizando...';
+
+    api('/auth/cambiar-contrasena', {
+    method: 'PUT',
+    body: {
+      passwordActual: actual,
+      passwordNueva: nueva
+    }
+    }).then(function (r) {
+      mensaje.textContent = r.data.mensaje || 'No se pudo cambiar la contraseña';
+
+      if (r.ok && r.data.exitoso) {
+        $('formCambiarContrasena').reset();
+      }
+    }).catch(function () {
+      mensaje.textContent = 'No se pudo conectar con el servidor';
+    }).finally(function () {
+      boton.disabled = false;
+      boton.textContent = 'Cambiar contraseña';
+    });
+  });
 
   // ---------- Pestañas de acceso ----------
   function cambiarAcceso(cual) {
@@ -592,6 +1301,161 @@
       });
     });
   }
+
+  // ---------- Historial completo ----------
+  var movimientosCompletos = [];
+
+  function cargarMovimientosCompletos() {
+    return api('/transacciones/movimientos?limite=100').then(function (r) {
+      if (!r.ok || !Array.isArray(r.data)) return;
+
+      movimientosCompletos = r.data;
+      aplicarFiltrosMovimientos();
+    });
+  }
+
+  // Convierte la fecha del movimiento al formato YYYY-MM-DD
+  function fechaParaFiltro(fecha) {
+    var d = new Date(fecha);
+
+    if (isNaN(d)) return '';
+
+    var anio = d.getFullYear();
+    var mes = String(d.getMonth() + 1).padStart(2, '0');
+    var dia = String(d.getDate()).padStart(2, '0');
+
+    return anio + '-' + mes + '-' + dia;
+  }
+
+  // Aplica los filtros seleccionados
+  function aplicarFiltrosMovimientos() {
+    var tipo = $('filtroTipo').value;
+    var desde = $('filtroDesde').value;
+    var hasta = $('filtroHasta').value;
+
+    var filtrados = movimientosCompletos.filter(function (m) {
+      var coincideTipo = true;
+
+      if (tipo === 'TRANSFERENCIA') {
+        coincideTipo = m.tipo.indexOf('TRANSFERENCIA') === 0;
+      } else if (tipo !== 'todos') {
+        coincideTipo = m.tipo === tipo;
+      }
+
+      var fecha = fechaParaFiltro(m.fecha);
+
+      var coincideDesde = !desde || (fecha && fecha >= desde);
+      var coincideHasta = !hasta || (fecha && fecha <= hasta);
+
+      return coincideTipo && coincideDesde && coincideHasta;
+    });
+
+    mostrarMovimientosCompletos(filtrados);
+  }
+
+  // Muestra los movimientos en pantalla
+  function mostrarMovimientosCompletos(movimientos) {
+    var ul = $('listaMovCompleta');
+    var vacio = $('vacioMovCompleto');
+
+    ul.textContent = '';
+
+    vacio.hidden = movimientos.length > 0;
+
+    if (movimientos.length === 0) {
+      vacio.querySelector('strong').textContent =
+        movimientosCompletos.length === 0
+          ? 'Aún no tienes movimientos'
+          : 'No se encontraron movimientos';
+
+      return;
+    }
+
+    vacio.querySelector('strong').textContent = 'Aún no tienes movimientos';
+
+    movimientos.forEach(function (m) {
+      var info = TIPOS[m.tipo] || {
+        t: m.tipo,
+        entra: m.tipo.indexOf('RECIBIDA') > -1
+      };
+
+      var clase = info.entra ? 'in' : 'out';
+
+      var li = document.createElement('li');
+      li.className = 'mov';
+
+      var ico = document.createElement('div');
+      ico.className = 'mov-ico ' + clase;
+      ico.innerHTML = info.entra ? ICONO_IN : ICONO_OUT;
+
+      var centro = document.createElement('div');
+
+      var tit = document.createElement('div');
+      tit.className = 'mov-tit';
+      tit.textContent = info.t;
+
+      var sub = document.createElement('div');
+      sub.className = 'mov-sub num';
+
+      var partes = [fechaBonita(m.fecha)];
+
+      if (m.contraparte) {
+        partes.push((info.entra ? 'de ' : 'a ') + celularBonito(m.contraparte));
+      }
+
+      if (m.gmf > 0) {
+        partes.push('4x1000: ' + dinero(m.gmf));
+      }
+
+      sub.textContent = partes.filter(Boolean).join(' · ');
+
+      centro.appendChild(tit);
+      centro.appendChild(sub);
+
+      var der = document.createElement('div');
+
+      var monto = document.createElement('div');
+      monto.className = 'mov-monto num ' + clase;
+      monto.textContent = (info.entra ? '+ ' : '− ') + dinero(m.monto);
+
+      var saldo = document.createElement('div');
+      saldo.className = 'mov-saldo num';
+      saldo.textContent = 'Saldo ' + dinero(m.saldoDespues);
+
+      der.appendChild(monto);
+      der.appendChild(saldo);
+
+      li.appendChild(ico);
+      li.appendChild(centro);
+      li.appendChild(der);
+
+      ul.appendChild(li);
+    });
+  }
+
+  // Actualizar historial
+  $('btnActualizarCompleto').addEventListener('click', function () {
+    var b = this;
+    b.disabled = true;
+
+    cargarMovimientosCompletos().then(function () {
+      b.disabled = false;
+    });
+  });
+
+  // Eventos de los filtros
+  $('filtroTipo').addEventListener('change', aplicarFiltrosMovimientos);
+  $('filtroDesde').addEventListener('change', aplicarFiltrosMovimientos);
+  $('filtroHasta').addEventListener('change', aplicarFiltrosMovimientos);
+
+  // Limpiar filtros
+  $('btnLimpiarFiltros').addEventListener('click', function () {
+    $('filtroTipo').value = 'todos';
+    $('filtroDesde').value = '';
+    $('filtroHasta').value = '';
+
+    aplicarFiltrosMovimientos();
+  });
 
   function refrescar() { return Promise.all([cargarSaldo(), cargarMovimientos()]); }
 
