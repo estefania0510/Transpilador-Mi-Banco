@@ -15,6 +15,8 @@ import com.banco.transacciones.Record.RegistroRequest;
 import com.banco.transacciones.Record.RegistroResponse;
 import com.banco.transacciones.Service.AuthService;
 import org.springframework.web.bind.annotation.PutMapping;
+import com.banco.transacciones.Record.PerfilResponse;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,7 +50,52 @@ public class AuthController {
                 : ResponseEntity.status(401).body(respuesta);
     }
     
-        @PutMapping("/cambiar-contrasena")
+    // Consultar perfil del usuario
+    @GetMapping("/perfil")
+    public ResponseEntity<?> consultarPerfil(
+            @RequestHeader(value = "Authorization", required = false) String auth) {
+
+        String celular = authService.celularDeEncabezado(auth);
+
+        if (celular == null) {
+            return ResponseEntity.status(401)
+                    .body(new RegistroResponse(false, "Sesión no válida. Inicia sesión de nuevo"));
+        }
+
+        PerfilResponse perfil = authService.consultarPerfil(celular);
+
+        if (perfil == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(perfil);
+    }
+
+    // Actualizar nombre y apellido
+    @PutMapping("/perfil")
+    public ResponseEntity<RegistroResponse> actualizarPerfil(
+            @RequestHeader(value = "Authorization", required = false) String auth,
+            @RequestBody Map<String, String> request) {
+
+        String celular = authService.celularDeEncabezado(auth);
+
+        if (celular == null) {
+            return ResponseEntity.status(401)
+                    .body(new RegistroResponse(false, "Sesión no válida. Inicia sesión de nuevo"));
+        }
+
+        RegistroResponse respuesta = authService.actualizarPerfil(
+                celular,
+                request.get("nombre"),
+                request.get("apellido")
+        );
+
+        return respuesta.exitoso()
+                ? ResponseEntity.ok(respuesta)
+                : ResponseEntity.badRequest().body(respuesta);
+    }
+
+    @PutMapping("/cambiar-contrasena")
     public ResponseEntity<RegistroResponse> cambiarContrasena(
             @RequestHeader(value = "Authorization", required = false) String auth,
             @RequestBody Map<String, String> request) {

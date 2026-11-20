@@ -18,6 +18,7 @@ import com.banco.transacciones.Record.LoginRequest;
 import com.banco.transacciones.Record.LoginResponse;
 import com.banco.transacciones.Record.RegistroRequest;
 import com.banco.transacciones.Record.RegistroResponse;
+import com.banco.transacciones.Record.PerfilResponse;
 
 @Service
 public class AuthService {
@@ -192,5 +193,58 @@ public class AuthService {
         );
 
         return new RegistroResponse(true, "La contraseña se cambió correctamente");
+    }
+
+    // Consultar los datos del perfil
+    public PerfilResponse consultarPerfil(String celular) {
+
+        List<Map<String, Object>> filas = jdbc.queryForList(
+                "SELECT nombre, apellido, documento, celular, fecha_nacimiento "
+                + "FROM usuarios WHERE celular = ?",
+                celular
+        );
+
+        if (filas.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Object> usuario = filas.get(0);
+
+        return new PerfilResponse(
+                (String) usuario.get("NOMBRE"),
+                (String) usuario.get("APELLIDO"),
+                (String) usuario.get("DOCUMENTO"),
+                (String) usuario.get("CELULAR"),
+                usuario.get("FECHA_NACIMIENTO").toString()
+        );
+    }
+
+    // Actualizar nombre y apellido
+    @Transactional
+    public RegistroResponse actualizarPerfil(
+            String celular,
+            String nombre,
+            String apellido) {
+
+        if (nombre == null || nombre.isBlank()) {
+            return new RegistroResponse(false, "El nombre es obligatorio");
+        }
+
+        if (apellido == null || apellido.isBlank()) {
+            return new RegistroResponse(false, "El apellido es obligatorio");
+        }
+
+        if (nombre.trim().length() > 60 || apellido.trim().length() > 60) {
+            return new RegistroResponse(false, "El nombre y apellido no pueden superar los 60 caracteres");
+        }
+
+        jdbc.update(
+                "UPDATE usuarios SET nombre = ?, apellido = ? WHERE celular = ?",
+                nombre.trim(),
+                apellido.trim(),
+                celular
+        );
+
+        return new RegistroResponse(true, "Los datos del perfil se actualizaron correctamente");
     }
 }
