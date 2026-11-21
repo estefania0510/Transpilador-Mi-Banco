@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     celular VARCHAR(10) PRIMARY KEY,
     nombre VARCHAR(60) NOT NULL,
     apellido VARCHAR(60) NOT NULL,
-    documento VARCHAR(20) NOT NULL,
+    documento VARCHAR(20) NOT NULL UNIQUE,
     fecha_nacimiento DATE NOT NULL,
     password_hash VARCHAR(100) NOT NULL
 );

@@ -6,6 +6,7 @@
 <title>Mi Banco</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -146,6 +147,82 @@
     font-size: 13px;
     color: var(--muted);
   }
+
+    /* Casillas para el PIN */
+  .pin-casillas {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 6px auto 0;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .pin-casillas input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: text;
+      z-index: 2;
+  }
+
+  .pin-casillas .pin-casilla {
+      width: 52px;
+      height: 52px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      color: var(--cobalt);
+      background: white;
+  }
+
+  .pin-casillas:focus-within .pin-casilla.activa {
+      border-color: var(--cobalt);
+      box-shadow: 0 0 0 3px var(--cobalt-soft);
+  }
+
+  .pin-contenedor {
+    position: relative;
+    width: 100%;
+  }
+
+  .password-normal {
+    display: flex;
+    align-items: center;
+  }
+
+  .password-normal input {
+      padding-right: 45px;
+  }
+
+  .btn-ver-pin {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 20px;
+      padding: 8px;
+      color: var(--muted);
+      z-index: 3;
+  }
+
+  .btn-ver-pin:hover {
+      color: var(--cobalt);
+  }
+
+  .btn-ver-pin .material-icons {
+    font-size: 22px;
+ }
 
   .row {
     display: grid;
@@ -603,6 +680,62 @@
     padding-left: 32px;
     font-size: 20px;
     font-weight: 700;
+  }
+
+    /* Ventana de confirmación del PIN */
+  .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.55);
+  }
+
+  .modal[hidden] {
+      display: none;
+  }
+
+  .modal-contenido {
+      width: 100%;
+      max-width: 420px;
+      padding: 28px;
+      border-radius: 16px;
+      background: var(--superficie, #ffffff);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .modal-contenido h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+  }
+
+  .modal-contenido p {
+      margin-bottom: 24px;
+      color: var(--texto-secundario, #666666);
+  }
+
+  .acciones-modal {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+  }
+
+  @media (max-width: 480px) {
+      .modal-contenido {
+          padding: 22px;
+      }
+
+      .acciones-modal {
+          flex-direction: column-reverse;
+      }
+
+      .acciones-modal button {
+          width: 100%;
+      }
   }
 
   /* ---------- Pantalla de historial ---------- */
@@ -1133,9 +1266,27 @@
             <input id="loginCelular" inputmode="numeric" autocomplete="username" maxlength="10" placeholder="3001234567">
           </div>
           <div class="field">
-            <label for="loginPassword">Contraseña</label>
-            <input id="loginPassword" type="password" autocomplete="current-password">
-          </div>
+    <label for="loginPassword">Contraseña</label>
+
+    <div class="pin-contenedor">
+        <div class="pin-casillas" id="contenedorPinLogin">
+            <input id="loginPassword" type="password"
+                   inputmode="numeric" maxlength="4"
+                   pattern="[0-9]*" autocomplete="current-password"
+                   aria-label="PIN de cuatro dígitos" required>
+            <div class="pin-casilla"></div>
+            <div class="pin-casilla"></div>
+            <div class="pin-casilla"></div>
+            <div class="pin-casilla"></div>
+        </div>
+        <button type="button" class="btn-ver-pin"
+                id="verPinLogin"
+                aria-label="Mostrar PIN"
+                title="Mostrar PIN">
+            <span class="material-icons" id="iconoPinLogin">visibility_off</span>
+        </button>
+        </div>
+    </div>
           <button class="btn btn-block" type="submit" id="btnLogin">Entrar</button>
         </form>
       </div>
@@ -1171,9 +1322,31 @@
             <span class="hint">Será tu número de cuenta. Debe tener 10 dígitos.</span>
           </div>
           <div class="field">
-            <label for="regPassword">Contraseña</label>
-            <input id="regPassword" type="password" autocomplete="new-password">
-            <span class="hint">Mínimo 4 caracteres.</span>
+            <label for="regPassword">PIN de seguridad</label>
+            <div class="pin-contenedor">
+            <div class="pin-casillas" id="contenedorPin">
+                <input
+                    id="regPassword"
+                    type="password"
+                    inputmode="numeric"
+                    maxlength="4"
+                    pattern="[0-9]*"
+                    autocomplete="new-password"
+                    aria-label="PIN de seguridad de cuatro dígitos"
+                    required>
+
+                <div class="pin-casilla"></div>
+                <div class="pin-casilla"></div>
+                <div class="pin-casilla"></div>
+                <div class="pin-casilla"></div>
+            </div>
+            <button type="button" class="btn-ver-pin" id="verPin" aria-label="Mostrar PIN" title="Mostrar PIN">
+                <span id="iconoVerPin" class="material-icons">visibility_off</span>
+            </button>
+        </div>
+              <span class="hint">
+              Elige cuatro números. Evita números repetidos o secuencias fáciles.
+              </span>
           </div>
           <button class="btn btn-block" type="submit" id="btnRegistro">Crear cuenta</button>
         </form>
@@ -1323,6 +1496,52 @@
 
               <div id="opMensaje" role="status" hidden></div>
             </form>
+            <!-- Ventana para confirmar el retiro con PIN -->
+              <div id="modalPinRetiro" class="modal" hidden>
+              <div class="modal-contenido">
+                <h2 id="tituloModalPin">Confirmar retiro</h2>
+                <p id="textoModalPin">
+                  Ingresa tu PIN de cuatro dígitos para autorizar esta operación.
+                </p>
+
+                  <div class="field">
+                    <label for="pinRetiro">PIN de seguridad</label>
+
+                    <div class="pin-contenedor">
+                      <div class="pin-casillas" id="contenedorPinRetiro">
+                        <input id="pinRetiro" type="password"
+                              inputmode="numeric" maxlength="4"
+                              pattern="[0-9]*" autocomplete="off"
+                              aria-label="PIN de cuatro dígitos">
+
+                        <div class="pin-casilla"></div>
+                        <div class="pin-casilla"></div>
+                        <div class="pin-casilla"></div>
+                        <div class="pin-casilla"></div>
+                      </div>
+
+                      <button type="button" class="btn-ver-pin"
+                              id="verPinRetiro"
+                              aria-label="Mostrar PIN"
+                              title="Mostrar PIN">
+                        <span class="material-icons" id="iconoPinRetiro">visibility_off</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div id="mensajePinRetiro" role="status" hidden></div>
+
+                  <div class="acciones-modal">
+                    <button type="button" class="btn btn-ghost" id="cancelarPinRetiro">
+                      Cancelar
+                    </button>
+
+                    <button type="button" class="btn" id="confirmarPinRetiro">
+                      Confirmar retiro
+                    </button>
+                  </div>
+                </div>
+              </div>
           </section>
         </div>
 
@@ -1502,31 +1721,87 @@
                 <h3>Cambiar contraseña</h3>
                 <p>Para mantener tu cuenta segura, ingresa tu contraseña actual y elige una nueva.</p>
 
-                <form id="formCambiarContrasena">
-                    <div class="field">
-                        <label for="passwordActual">Contraseña actual</label>
+            <form id="formCambiarContrasena">
+
+                <!-- Contraseña actual -->
+                <div class="field">
+                    <label for="passwordActual">Contraseña actual</label>
+
+                    <div class="pin-contenedor password-normal">
                         <input type="password" id="passwordActual"
                               placeholder="Ingresa tu contraseña actual" required>
+
+                        <button type="button" class="btn-ver-pin"
+                                id="verPasswordActual"
+                                aria-label="Mostrar contraseña actual"
+                                title="Mostrar contraseña">
+                            <span class="material-icons" id="iconoPasswordActual">visibility_off</span>
+                        </button>
                     </div>
+                </div>
 
-                    <div class="field">
-                        <label for="passwordNueva">Nueva contraseña</label>
-                        <input type="password" id="passwordNueva"
-                              placeholder="Mínimo 4 caracteres" minlength="4" required>
+                <!-- Nueva contraseña -->
+                <div class="field">
+                    <label for="passwordNueva">Nueva contraseña</label>
+
+                    <div class="pin-contenedor">
+                        <div class="pin-casillas" id="contenedorPinNueva">
+                            <input type="password" id="passwordNueva"
+                                  inputmode="numeric" maxlength="4"
+                                  pattern="[0-9]*" autocomplete="new-password"
+                                  aria-label="Nueva contraseña de cuatro dígitos"
+                                  required>
+
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                        </div>
+
+                        <button type="button" class="btn-ver-pin"
+                                id="verPinNueva"
+                                aria-label="Mostrar nueva contraseña"
+                                title="Mostrar contraseña">
+                            <span class="material-icons" id="iconoPinNueva">visibility_off</span>
+                        </button>
                     </div>
+                </div>
 
-                    <div class="field">
-                        <label for="passwordConfirmar">Confirmar nueva contraseña</label>
-                        <input type="password" id="passwordConfirmar"
-                              placeholder="Repite la nueva contraseña" minlength="4" required>
+                <!-- Confirmar contraseña -->
+                <div class="field">
+                    <label for="passwordConfirmar">Confirmar nueva contraseña</label>
+
+                    <div class="pin-contenedor">
+                        <div class="pin-casillas" id="contenedorPinConfirmar">
+                            <input type="password" id="passwordConfirmar"
+                                  inputmode="numeric" maxlength="4"
+                                  pattern="[0-9]*" autocomplete="new-password"
+                                  aria-label="Confirmar nueva contraseña de cuatro dígitos"
+                                  required>
+
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                            <div class="pin-casilla"></div>
+                        </div>
+
+                        <button type="button" class="btn-ver-pin"
+                                id="verPinConfirmar"
+                                aria-label="Mostrar confirmación"
+                                title="Mostrar contraseña">
+                            <span class="material-icons" id="iconoPinConfirmar">visibility_off</span>
+                        </button>
                     </div>
+                </div>
 
-                    <div id="mensajeContrasena" class="mensaje" hidden></div>
+                <div id="mensajeContrasena" class="mensaje" hidden></div>
 
-                    <button type="submit" class="btn btn-primary" id="btnCambiarContrasena">
-                        Cambiar contraseña
-                    </button>
-                </form>
+                <button type="submit" class="btn btn-primary" id="btnCambiarContrasena">
+                    Cambiar contraseña
+                </button>
+
+            </form>
+
             </section>
         </div>
       </main>
@@ -1764,6 +2039,103 @@
     cambiarVista('ayuda');
   });
 
+  // ---------- Mostrar y ocultar contraseña actual ----------
+  $('verPasswordActual').addEventListener('click', function () {
+    var campo = $('passwordActual');
+    var visible = campo.type === 'password';
+
+    campo.type = visible ? 'text' : 'password';
+
+    $('iconoPasswordActual').textContent =
+        visible ? 'visibility' : 'visibility_off';
+
+    this.setAttribute(
+        'aria-label',
+        visible ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'
+    );
+
+    this.title = visible ? 'Ocultar contraseña' : 'Mostrar contraseña';
+    campo.focus();
+  });
+
+
+  // ---------- Configurar casillas de PIN ----------
+  function configurarCasillasPin(inputId, contenedorId, botonId, iconoId) {
+    var campo = $(inputId);
+    var casillas = document.querySelectorAll(
+        '#' + contenedorId + ' .pin-casilla'
+    );
+    var boton = $(botonId);
+    var icono = $(iconoId);
+
+    function actualizarCasillas() {
+        var pin = campo.value.replace(/\D/g, '').slice(0, 4);
+        campo.value = pin;
+
+        casillas.forEach(function (casilla, indice) {
+            casilla.textContent = indice < pin.length
+                ? (campo.type === 'text' ? pin[indice] : '●')
+                : '';
+
+            casilla.classList.toggle('activa', indice === pin.length);
+        });
+
+        if (pin.length === 4) {
+            casillas[3].classList.add('activa');
+        }
+    }
+
+    campo.addEventListener('input', actualizarCasillas);
+
+    boton.addEventListener('click', function () {
+        var visible = campo.type === 'password';
+
+        campo.type = visible ? 'text' : 'password';
+
+        icono.textContent = visible ? 'visibility' : 'visibility_off';
+
+        boton.setAttribute(
+            'aria-label',
+            visible ? 'Ocultar PIN' : 'Mostrar PIN'
+        );
+
+        boton.title = visible ? 'Ocultar PIN' : 'Mostrar PIN';
+
+        actualizarCasillas();
+        campo.focus();
+    });
+  }
+
+  // Configurar nueva contraseña y confirmación
+  configurarCasillasPin(
+      'passwordNueva',
+      'contenedorPinNueva',
+      'verPinNueva',
+      'iconoPinNueva'
+  );
+
+  configurarCasillasPin(
+      'passwordConfirmar',
+      'contenedorPinConfirmar',
+      'verPinConfirmar',
+      'iconoPinConfirmar'
+  );
+
+  configurarCasillasPin(
+    'loginPassword',
+    'contenedorPinLogin',
+    'verPinLogin',
+    'iconoPinLogin'
+  );
+
+  // Configurar casillas del PIN para autorizar retiros
+configurarCasillasPin(
+    'pinRetiro',
+    'contenedorPinRetiro',
+    'verPinRetiro',
+    'iconoPinRetiro'
+);
+  
     // ---------- Cambio de contraseña ----------
   $('formCambiarContrasena').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1805,6 +2177,31 @@
 
       if (r.ok && r.data.exitoso) {
         $('formCambiarContrasena').reset();
+
+        // Restablecer la contraseña actual
+        $('passwordActual').type = 'password';
+        $('iconoPasswordActual').textContent = 'visibility_off';
+        $('verPasswordActual').setAttribute('aria-label', 'Mostrar contraseña actual');
+
+        // Restablecer las dos casillas de PIN
+        [
+            {
+                campo: 'passwordNueva',
+                boton: 'verPinNueva',
+                icono: 'iconoPinNueva'
+            },
+            {
+                campo: 'passwordConfirmar',
+                boton: 'verPinConfirmar',
+                icono: 'iconoPinConfirmar'
+            }
+        ].forEach(function (dato) {
+            $(dato.campo).type = 'password';
+            $(dato.icono).textContent = 'visibility_off';
+            $(dato.boton).setAttribute('aria-label', 'Mostrar PIN');
+            $(dato.boton).title = 'Mostrar PIN';
+            $(dato.campo).dispatchEvent(new Event('input'));
+        });
       }
     }).catch(function () {
       mensaje.textContent = 'No se pudo conectar con el servidor';
@@ -1843,11 +2240,67 @@
           sesion.set('celular', celular);
           sesion.tocar();
           $('loginPassword').value = '';
+          $('loginPassword').dispatchEvent(new Event('input'));
           mostrarPanel();
         } else {
           mostrarMsg($('avisoAcceso'), 'err', r.data.mensaje || 'Celular o contraseña incorrectos.');
         }
       });
+  });
+
+  // ---------- Visualización del PIN ----------
+  $('regPassword').addEventListener('input', function () {
+      var pin = this.value.replace(/\D/g, '').slice(0, 4);
+      this.value = pin;
+
+      var casillas = document.querySelectorAll('#contenedorPin .pin-casilla');
+
+      var visible = $('regPassword').type === 'text';
+
+      casillas.forEach(function (casilla, indice) {
+          casilla.textContent = indice < pin.length
+              ? (visible ? pin[indice] : '●')
+              : '';
+
+          casilla.classList.toggle('activa', indice === pin.length);
+      });
+
+      if (pin.length === 4) {
+          casillas[3].classList.add('activa');
+      }
+  });
+
+   // Mostrar u ocultar PIN
+ // Mostrar u ocultar PIN
+  $('verPin').addEventListener('click', function () {
+    var campo = $('regPassword');
+    var visible = campo.type === 'password';
+
+    // Cambiar el tipo de campo
+    campo.type = visible ? 'text' : 'password';
+
+    // Cambiar el icono
+    $('iconoVerPin').textContent = visible
+        ? 'visibility'
+        : 'visibility_off';
+
+    this.setAttribute('aria-label', visible ? 'Ocultar PIN' : 'Mostrar PIN');
+    this.title = visible ? 'Ocultar PIN' : 'Mostrar PIN';
+
+    // Actualizar las cuatro casillas
+    var casillas = document.querySelectorAll('#contenedorPin .pin-casilla');
+
+    casillas.forEach(function (casilla, indice) {
+        if (indice < campo.value.length) {
+            casilla.textContent = visible
+                ? campo.value[indice]
+                : '●';
+        } else {
+            casilla.textContent = '';
+        }
+    });
+
+    campo.focus();
   });
 
   // ---------- Registro ----------
@@ -1868,7 +2321,8 @@
     if (!d.fechaNacimiento) return mostrarMsg(av, 'err', 'Elige tu fecha de nacimiento.');
     if (!esMayorDeEdad(d.fechaNacimiento)) return mostrarMsg(av, 'err', 'Solo pueden abrir cuenta las personas mayores de 18 años.');
     if (!/^\d{10}$/.test(d.celular)) return mostrarMsg(av, 'err', 'El celular debe tener 10 dígitos.');
-    if (d.password.length < 4) return mostrarMsg(av, 'err', 'La contraseña debe tener mínimo 4 caracteres.');
+    if (!/^\d{4}$/.test(d.password)) {
+      return mostrarMsg(av, 'err', 'El PIN debe tener exactamente cuatro números.');}
     var btn = $('btnRegistro'); btn.disabled = true;
     api('/auth/registro', { method: 'POST', auth: false, body: d }).then(function (r) {
       btn.disabled = false;
@@ -2260,36 +2714,199 @@
   }
   $('opMonto').addEventListener('input', actualizarAvisoGmf);
 
-  $('formOp').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var msg = $('opMensaje');
-    var monto = leerMonto($('opMonto').value);
-    if (!(monto > 0)) return mostrarMsg(msg, 'err', 'Escribe un monto mayor a 0.');
+  
+  // ---------- Operaciones ----------
+  function enviarOperacion(pin) {
+      var msg = $('opMensaje');
+      var monto = leerMonto($('opMonto').value);
 
-    var ruta, metodo, cuerpo = { monto: monto };
-    if (operacion === 'consignar') { ruta = '/transacciones/consignar'; metodo = 'PUT'; }
-    else if (operacion === 'retirar') { ruta = '/transacciones/retirar'; metodo = 'PUT'; }
-    else {
+      var ruta, metodo, cuerpo = { monto: monto };
+
+      if (operacion === 'consignar') {
+          ruta = '/transacciones/consignar';
+          metodo = 'PUT';
+
+      } else if (operacion === 'retirar') {
+          ruta = '/transacciones/retirar';
+          metodo = 'PUT';
+          cuerpo.pin = pin;
+
+      } else {
       var destino = $('opDestino').value.trim();
-      if (!/^\d{10}$/.test(destino)) return mostrarMsg(msg, 'err', 'El celular de destino debe tener 10 dígitos.');
-      if (destino === sesion.celular) return mostrarMsg(msg, 'err', 'No puedes transferirte a tu propia cuenta.');
-      ruta = '/transacciones/transferir'; metodo = 'POST'; cuerpo.cuentaDestino = destino;
+
+      if (!/^\d{10}$/.test(destino)) {
+          return mostrarMsg(msg, 'err',
+              'El celular de destino debe tener 10 dígitos.');
+      }
+
+      if (destino === sesion.celular) {
+          return mostrarMsg(msg, 'err',
+              'No puedes transferirte a tu propia cuenta.');
+      }
+
+      ruta = '/transacciones/transferir';
+      metodo = 'POST';
+      cuerpo.cuentaDestino = destino;
+      cuerpo.pin = pin;
     }
 
-    var btn = $('btnOp'); btn.disabled = true;
-    api(ruta, { method: metodo, body: cuerpo }).then(function (r) {
-      btn.disabled = false;
-      if (r.status === 401) return;
-      if (r.ok && r.data.exitoso !== false) {
-        mostrarMsg(msg, 'ok', r.data.mensaje || 'Operación exitosa.');
-        $('opMonto').value = '';
-        if (operacion === 'transferir') $('opDestino').value = '';
-        actualizarAvisoGmf();
-        refrescar();
-      } else {
-        mostrarMsg(msg, 'err', r.data.mensaje || 'No se pudo completar la operación.');
+      var btn = $('btnOp');
+      btn.disabled = true;
+
+      if (operacion === 'retirar') {
+          $('confirmarPinRetiro').disabled = true;
       }
-    });
+
+      api(ruta, { method: metodo, body: cuerpo }).then(function (r) {
+          btn.disabled = false;
+          $('confirmarPinRetiro').disabled = false;
+
+          if (r.status === 401) {
+              $('modalPinRetiro').hidden = true;
+              return;
+          }
+
+          if (r.ok && r.data.exitoso !== false) {
+              mostrarMsg(msg, 'ok',
+                  r.data.mensaje || 'Operación exitosa.');
+
+              $('opMonto').value = '';
+
+              if (operacion === 'transferir') {
+                $('opDestino').value = '';
+              }
+
+              if (operacion === 'retirar' || operacion === 'transferir') {
+                $('modalPinRetiro').hidden = true;
+                limpiarPinRetiro();
+              }
+
+              actualizarAvisoGmf();
+              refrescar();
+
+          } else if (
+            (operacion === 'retirar' || operacion === 'transferir') &&
+            r.data.mensaje === 'PIN incorrecto'
+          ) {
+              mostrarMsg(
+                  $('mensajePinRetiro'),
+                  'err',
+                  'El PIN ingresado es incorrecto. Inténtalo nuevamente.'
+              );
+
+              limpiarPinRetiro();
+
+          } else {
+              if (operacion === 'retirar' || operacion === 'transferir') {
+                $('modalPinRetiro').hidden = true;
+                limpiarPinRetiro();
+             }
+
+              mostrarMsg(msg, 'err',
+                  r.data.mensaje || 'No se pudo completar la operación.');
+          }
+      });
+  }
+
+  // Limpiar el PIN y restablecer las casillas
+  function limpiarPinRetiro() {
+      var campo = $('pinRetiro');
+
+      campo.value = '';
+      campo.type = 'password';
+
+      $('iconoPinRetiro').textContent = 'visibility_off';
+      $('verPinRetiro').setAttribute('aria-label', 'Mostrar PIN');
+      $('verPinRetiro').title = 'Mostrar PIN';
+
+      campo.dispatchEvent(new Event('input'));
+  }
+
+  // Enviar formulario de operaciones
+  $('formOp').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var msg = $('opMensaje');
+      var monto = leerMonto($('opMonto').value);
+      console.log('Operación seleccionada:', operacion);
+
+      if (!(monto > 0)) {
+          return mostrarMsg(msg, 'err',
+              'Escribe un monto mayor a 0.');
+      }
+
+      // Solicitar PIN para retiros y transferencias
+  if (operacion === 'retirar' || operacion === 'transferir') {
+
+      // Validar el destino antes de abrir la ventana
+      if (operacion === 'transferir') {
+          var destino = $('opDestino').value.trim();
+
+          if (!/^\d{10}$/.test(destino)) {
+              return mostrarMsg(msg, 'err',
+                  'El celular de destino debe tener 10 dígitos.');
+          }
+
+          if (destino === sesion.celular) {
+              return mostrarMsg(msg, 'err',
+                  'No puedes transferirte a tu propia cuenta.');
+          }
+      }
+
+      limpiarPinRetiro();
+      ocultar($('opMensaje'));
+      ocultar($('mensajePinRetiro'));
+
+      // Cambiar el contenido de la ventana según la operación
+      if (operacion === 'retirar') {
+          $('tituloModalPin').textContent = 'Confirmar retiro';
+          $('textoModalPin').textContent =
+              'Ingresa tu PIN para autorizar el retiro.';
+          $('confirmarPinRetiro').textContent = 'Confirmar retiro';
+
+      } else {
+          $('tituloModalPin').textContent = 'Confirmar transferencia';
+          $('textoModalPin').textContent =
+              'Ingresa tu PIN para autorizar la transferencia.';
+          $('confirmarPinRetiro').textContent = 'Confirmar transferencia';
+      }
+
+      $('modalPinRetiro').hidden = false;
+      $('pinRetiro').focus();
+      return;
+    }
+      enviarOperacion(null);
+  });
+
+  // Cancelar la autorización del retiro
+  $('cancelarPinRetiro').addEventListener('click', function () {
+      $('modalPinRetiro').hidden = true;
+      limpiarPinRetiro();
+      ocultar($('mensajePinRetiro'));
+  });
+
+  // Confirmar el retiro con el PIN
+  $('confirmarPinRetiro').addEventListener('click', function () {
+      var pin = $('pinRetiro').value;
+
+      if (!/^\d{4}$/.test(pin)) {
+          return mostrarMsg(
+              $('mensajePinRetiro'),
+              'err',
+              'Ingresa los cuatro dígitos de tu PIN.'
+          );
+      }
+
+      ocultar($('mensajePinRetiro'));
+      enviarOperacion(pin);
+  });
+
+  // Permitir confirmar con Enter
+  $('pinRetiro').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+          e.preventDefault();
+          $('confirmarPinRetiro').click();
+      }
   });
 
   // ---------- Inactividad ----------

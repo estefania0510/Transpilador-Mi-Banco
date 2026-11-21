@@ -52,12 +52,38 @@ public class CuentaController {
     @PutMapping("/retirar")
     public ResponseEntity<RetiroResponse> retirar(
             @RequestHeader(value = "Authorization", required = false) String auth,
-            @RequestBody RetiroRequest request) {
+            @RequestBody Map<String, Object> request) {
+
         String cuenta = authService.celularDeEncabezado(auth);
+
         if (cuenta == null) {
-            return ResponseEntity.status(401).body(new RetiroResponse(false, SIN_SESION, 0));
+            return ResponseEntity.status(401)
+                    .body(new RetiroResponse(false, SIN_SESION, 0));
         }
-        RetiroResponse respuesta = cuentaService.retirar(new RetiroRequest(cuenta, request.monto()));
+
+        // Obtener el PIN y el monto enviados desde el frontend
+        String pin = request.get("pin") != null
+                ? request.get("pin").toString()
+                : null;
+
+        double monto;
+
+        try {
+            monto = Double.parseDouble(request.get("monto").toString());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new RetiroResponse(false, "El monto no es válido", 0));
+        }
+
+        // Verificar el PIN antes de realizar el retiro
+        if (!authService.validarPin(cuenta, pin)) {
+            return ResponseEntity.badRequest()
+                    .body(new RetiroResponse(false, "PIN incorrecto", 0));
+        }
+
+        RetiroResponse respuesta = cuentaService.retirar(
+                new RetiroRequest(cuenta, monto));
+
         return respuesta.exitoso()
                 ? ResponseEntity.ok(respuesta)
                 : ResponseEntity.badRequest().body(respuesta);
@@ -80,13 +106,42 @@ public class CuentaController {
     @PostMapping("/transferir")
     public ResponseEntity<TransferenciaResponse> transferir(
             @RequestHeader(value = "Authorization", required = false) String auth,
-            @RequestBody TransferenciaRequest request) {
+            @RequestBody Map<String, Object> request) {
+
         String cuenta = authService.celularDeEncabezado(auth);
+
         if (cuenta == null) {
-            return ResponseEntity.status(401).body(new TransferenciaResponse(false, SIN_SESION, 0, 0));
+            return ResponseEntity.status(401)
+                    .body(new TransferenciaResponse(false, SIN_SESION, 0, 0));
         }
+
+        // Obtener los datos de la transferencia
+        String pin = request.get("pin") != null
+                ? request.get("pin").toString()
+                : null;
+
+        String cuentaDestino = request.get("cuentaDestino") != null
+                ? request.get("cuentaDestino").toString()
+                : null;
+
+        double monto;
+
+        try {
+            monto = Double.parseDouble(request.get("monto").toString());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new TransferenciaResponse(false, "El monto no es válido", 0, 0));
+        }
+
+        // Verificar el PIN antes de transferir
+        if (!authService.validarPin(cuenta, pin)) {
+            return ResponseEntity.badRequest()
+                    .body(new TransferenciaResponse(false, "PIN incorrecto", 0, 0));
+        }
+
         TransferenciaResponse respuesta = cuentaService.transferir(
-                new TransferenciaRequest(cuenta, request.cuentaDestino(), request.monto()));
+                new TransferenciaRequest(cuenta, cuentaDestino, monto));
+
         return respuesta.exitoso()
                 ? ResponseEntity.ok(respuesta)
                 : ResponseEntity.badRequest().body(respuesta);
